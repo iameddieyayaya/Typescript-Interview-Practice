@@ -98,6 +98,7 @@ Use `src/prompts/mock-interview.ts` for a single-file screen-share style session
 
 ## Notes
 
+- This repository was created with Codex.
 - No third-party runtime libraries are used.
 - Solutions favor readability and defensible tradeoffs over cleverness.
 - Shared types live in `src/types/leave.ts`.
