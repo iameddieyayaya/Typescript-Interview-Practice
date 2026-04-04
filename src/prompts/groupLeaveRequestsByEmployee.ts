@@ -47,7 +47,10 @@ export function groupLeaveRequestsByEmployee(
 ): LeaveDaysByEmployee {
   // TODO:
   // Return total leave days per employee
-  throw new Error("TODO: implement groupLeaveRequestByEmployee")
+  return requests.reduce((totals, request) => {
+    totals[request.employeeId] = (totals[request.employeeId] || 0) + request.days
+    return totals
+  }, {} as LeaveDaysByEmployee)
 }
 
 /*
@@ -59,20 +62,50 @@ export function countLeaveRequestsByEmployee(
 ): Record<number, number> {
   // TODO:
   // Count how many times each employeeId appears.
-  throw new Error("TODO: implement countLeaveRequestsByEmployee");
+  return requests.reduce((leaves, request) => {
+    leaves[request.employeeId] = (leaves[request.employeeId] || 0) + 1
+    return leaves
+  }, {} as Record<number, number>)
 }
 
 /*
 3. groupLeaveRequestsByType
 Input includes a `type` such as vacation, sick, personal, or unpaid.
 Return an object where each type maps to an array of requests.
+
+output example:
+{
+  vacation: [
+    { employeeId: 1, days: 3, type: "vacation" },
+    { employeeId: 1, days: 1, type: "vacation" },
+  ],
+  sick: [
+    { employeeId: 2, days: 2, type: "sick" },
+  ],
+  personal: [
+    { employeeId: 3, days: 4, type: "personal" },
+  ],
+}
 */
+
+
 export function groupLeaveRequestsByType(
   requests: LeaveRequestWithType[],
 ): Partial<LeaveRequestsByType> {
   // TODO:
   // Group each request into the correct array by type.
-  throw new Error("TODO: implement groupLeaveRequestsByType");
+  return requests.reduce((leaves, request) => {
+    const key = request.type
+
+    if (!leaves[key]) {
+      leaves[key] = []
+    }
+
+    leaves[key].push(request)
+
+    return leaves
+
+  }, {} as Partial<LeaveRequestsByType>)
 }
 
 /*
@@ -86,7 +119,18 @@ export function getEmployeesWithMoreThanNDays(
   // TODO:
   // Reuse the grouped totals if helpful.
   // Return only employeeIds whose total is > minDays.
-  throw new Error("TODO: implement getEmployeesWithMoreThanNDays");
+
+  //looks like this {1: 4, 2:5}
+  const totals = requests.reduce((totals, request) => {
+    totals[request.employeeId] = (totals[request.employeeId] || 0) + request.days
+    return totals
+  }, {} as LeaveDaysByEmployee)
+
+  //loop thru totals obj -
+  // return Object.entries(totals).filter((val) => val[1] > minDays).map(val => Number(val[0]))
+  return Object.entries(totals)
+    .filter(([_, totalDays]) => totalDays > minDays)
+    .map(([employeeId]) => Number(employeeId))
 }
 
 /*
@@ -96,13 +140,18 @@ Return the total days across all requests.
 export function getTotalLeaveDays(requests: BasicLeaveRequest[]): number {
   // TODO:
   // Sum the days across the whole array.
-  throw new Error("TODO: implement getTotalLeaveDays");
+  return requests.reduce((acc, req) => {
+    acc += req.days
+    return acc
+  }, 0 as number)
 }
 
 /*
 6. getAverageLeaveDaysPerRequest
 Return the average number of days per request.
 Return 0 for an empty array.
+
+output
 */
 export function getAverageLeaveDaysPerRequest(
   requests: BasicLeaveRequest[],
@@ -110,7 +159,15 @@ export function getAverageLeaveDaysPerRequest(
   // TODO:
   // Guard against empty input.
   // Divide total days by request count.
-  throw new Error("TODO: implement getAverageLeaveDaysPerRequest");
+  if (requests.length === 0) return 0;
+
+  // const total = requests.reduce((acc,req) => {
+  //   acc += req.days
+  //   return acc
+  // }, 0 as number)
+  const total = requests.reduce((acc, req) => acc + req.days, 0)
+
+  return total / requests.length
 }
 
 /*
@@ -123,7 +180,19 @@ export function getMaxLeaveRequest<T extends BasicLeaveRequest>(
 ): T | undefined {
   // TODO:
   // Track the largest request seen so far.
-  throw new Error("TODO: implement getMaxLeaveRequest");
+  if (requests.length === 0) return undefined;
+  const maxReq = requests.reduce((max, req) => {
+    if (!max) {
+      max = req
+    }
+
+    if (max.days < req.days) {
+      max = req
+    }
+    return max;
+  }, undefined as T | undefined)
+
+  return maxReq
 }
 
 /*
@@ -137,7 +206,11 @@ export function normalizeLeaveRequests(
 ): NormalizedLeaveRequest[] {
   // TODO:
   // Use map to produce a new shape for each request.
-  throw new Error("TODO: implement normalizeLeaveRequests");
+  const longLeaveNumber = 5
+
+  return requests.map((req) => {
+    return { ...req, isLongLeave: req.days > longLeaveNumber }
+  })
 }
 
 /*
