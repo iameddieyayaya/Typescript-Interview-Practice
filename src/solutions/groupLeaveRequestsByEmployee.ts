@@ -1,20 +1,20 @@
 import type { LeaveDaysByEmployee, LeaveRequest } from "../types/leave";
 
-export type BasicLeaveRequest = Pick<LeaveRequest, "employeeId" | "days">;
-export type LeaveRequestType = "vacation" | "sick" | "personal" | "unpaid";
+type BasicLeaveRequest = Pick<LeaveRequest, "employeeId" | "days">;
+type LeaveRequestType = "vacation" | "sick" | "personal" | "unpaid";
 
-export interface LeaveRequestWithType extends BasicLeaveRequest {
+interface LeaveRequestWithType extends BasicLeaveRequest {
   type: LeaveRequestType;
 }
 
-export interface NormalizedLeaveRequest {
+interface NormalizedLeaveRequest {
   employeeId: number;
   days: number;
   isLongLeave: boolean;
 }
 
-export type LeaveRequestsByType = Record<LeaveRequestType, LeaveRequestWithType[]>;
-export type LeaveDaysByEmployeeAndType = Record<number, Partial<Record<LeaveRequestType, number>>>;
+type LeaveRequestsByType = Record<LeaveRequestType, LeaveRequestWithType[]>;
+type LeaveDaysByEmployeeAndType = Record<number, Partial<Record<LeaveRequestType, number>>>;
 
 export function groupLeaveRequestsByEmployee(
   requests: BasicLeaveRequest[],
