@@ -26,5 +26,44 @@ Sample output:
 export function generateLeaveSummaryReport(requests: LeaveRequest[]): LeaveSummaryReport {
   // TODO:
   // Walk the list once and build the summary fields.
-  throw new Error("TODO: implement generateLeaveSummaryReport");
+  let totalRequests = 0
+  let totalApprovedDays = 0
+  let totalPendingRequests = 0
+  const leaveTypeCounts: Record<string, number> = {}
+
+  requests.forEach((req) => {
+    totalRequests += 1
+
+    if (req.status == "approved") {
+      totalApprovedDays += req.days
+    }
+    if (req.status == "pending") {
+      totalPendingRequests += 1
+    }
+
+    if (req.leaveType) {
+      leaveTypeCounts[req.leaveType] = (leaveTypeCounts[req.leaveType] || 0) + 1
+    }
+
+  })
+
+
+  const leaveTypes = Object.keys(leaveTypeCounts)
+
+  const mostCommonLeaveType =
+    leaveTypes.length === 0
+      ? null
+      : leaveTypes.reduce((a, b) =>
+        leaveTypeCounts[a] >= leaveTypeCounts[b] ? a : b)
+
+
+
+  return {
+    totalRequests,
+    totalApprovedDays,
+    totalPendingRequests,
+    mostCommonLeaveType,
+  }
+
+
 }

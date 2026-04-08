@@ -26,5 +26,10 @@ export function detectOverlappingLeaveRequests(
   // TODO:
   // Return true if any approved request overlaps the new date range.
   // Treat touching boundaries as overlapping.
-  throw new Error("TODO: implement detectOverlappingLeaveRequests");
+  const newReqStartT = new Date(newRequest.startDate).getTime()
+  const newReqEndT = new Date(newRequest.endDate).getTime()
+
+  return approvedRequests.some((existing) => {
+    return !(newReqEndT < new Date(existing.startDate).getTime() || newReqStartT > new Date(existing.endDate).getTime())
+  })
 }

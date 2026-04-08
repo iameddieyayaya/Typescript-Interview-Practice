@@ -228,7 +228,24 @@ export function groupAndSumByEmployeeAndType(
   // TODO:
   // Build a nested object.
   // Group first by employeeId, then by type, summing days.
-  throw new Error("TODO: implement groupAndSumByEmployeeAndType");
+
+  return requests.reduce((acc, req) => {
+
+    const employeeId = req.employeeId
+    const type = req.type
+
+    if (!acc[employeeId]) {
+      acc[employeeId] = {}
+    }
+
+    if (!acc[employeeId][type]) {
+      acc[employeeId][type] = 0
+    }
+
+    acc[employeeId][type] += req.days
+
+    return acc
+  }, {} as LeaveDaysByEmployeeAndType)
 }
 
 /*
@@ -245,5 +262,19 @@ export function getTopKEmployeesByLeaveDays(
   // Compute total days per employee.
   // Sort by total descending, then employeeId ascending.
   // Return only the top K employeeIds.
-  throw new Error("TODO: implement getTopKEmployeesByLeaveDays");
+
+  const totals = requests.reduce((totals, request) => {
+    totals[request.employeeId] = (totals[request.employeeId] || 0) + request.days
+    return totals
+  }, {} as LeaveDaysByEmployee)
+
+  const sorted = Object.entries(totals).sort((a, b) => {
+    if (a[1] != b[1])
+      return b[1] - a[1]
+    else
+      return a[1] - b[1]
+  }).slice(0, k).map(x => Number(x[0]))
+
+  return sorted
+
 }

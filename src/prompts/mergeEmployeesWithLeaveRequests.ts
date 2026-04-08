@@ -30,5 +30,21 @@ export function mergeEmployeesWithLeaveRequests(
 ): EmployeeWithRequests[] {
   // TODO:
   // Group requests by employeeId, then map employees to enriched objects.
-  throw new Error("TODO: implement mergeEmployeesWithLeaveRequests");
+
+  const totalRequests = requests.reduce((acc, req) => {
+    if (!acc[req.employeeId]) {
+      acc[req.employeeId] = []
+    }
+
+    acc[req.employeeId].push(req)
+
+    return acc
+  }, {} as Record<number, LeaveRequest[]>)
+
+  return employees.map(emp => ({
+    ...emp,
+    requests: totalRequests[emp.id] || []
+  }))
+
+
 }

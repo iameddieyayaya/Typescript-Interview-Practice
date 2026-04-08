@@ -27,5 +27,12 @@ export function findEmployeesWithPendingRequestsOlderThanXDays(
 ): Pick<LeaveRequest, "status" | "createdAt">[] {
   // TODO:
   // Keep only pending requests strictly older than the given number of days.
-  throw new Error("TODO: implement findEmployeesWithPendingRequestsOlderThanXDays");
+  return requests.filter(req => {
+    const diffInMs = new Date(today).getTime() - new Date(req.createdAt).getTime()
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+    return req.status == "pending" && diffInDays > minimumAgeInDays
+
+  })
+
 }

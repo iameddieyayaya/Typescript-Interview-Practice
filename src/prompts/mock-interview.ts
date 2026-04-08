@@ -30,8 +30,16 @@ Expected output:
 export function groupLeaveRequestsByEmployeeForMockInterview(
   requests: Pick<LeaveRequest, "employeeId" | "days">[],
 ): Record<number, number> {
+  return requests.reduce((total, req) => {
+
+    total[req.employeeId] = (total[req.employeeId] || 0) + req.days
+
+
+  }, {} as Record<number, number>)
+
+
   // TODO
-  throw new Error("TODO: implement groupLeaveRequestsByEmployeeForMockInterview");
+
 }
 
 /*
